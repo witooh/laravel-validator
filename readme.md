@@ -1,6 +1,6 @@
 <h1>Validator Interface</h1>
 
-<h2>Usage/h2>
+<h2>Usage</h2>
 ```php
 namespace Domains\Validators;
 
