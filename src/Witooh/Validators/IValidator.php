@@ -61,7 +61,7 @@ abstract class IValidator
 
     public function setAttributes(array $attributes)
     {
-        $this->attributes($attributes);
+        $this->attributes = $attributes;
     }
 
     public function setRule(array $rule){
