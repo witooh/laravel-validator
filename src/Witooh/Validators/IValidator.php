@@ -4,39 +4,48 @@ namespace Witooh\Validators;
 
 use Illuminate\Support\Facades\Validator;
 
-abstract class IValidator {
+abstract class IValidator
+{
 
     protected $attributes;
     protected $rule;
     public $errors;
 
-    function __construct($attributes){
-        $this->attributes = $attributes;
-        $this->errors = null;
+    function __construct($attributes = null)
+    {
+        $this->attributes = $attributes ? : null;
+        $this->errors     = null;
         $this->registerCustomValidators();
     }
 
-    public function passes(){
+    public function passes()
+    {
         $validator = Validator::make($this->attributes, $this->rule);
 
-        if($validator->passes()) return true;
+        if ($validator->passes()) {
+            return true;
+        }
 
         $this->errors = $validator->messages();
 
         return false;
     }
 
-    public function fails(){
+    public function fails()
+    {
         $validator = Validator::make($this->attributes, $this->rule);
 
-        if($validator->passes()) return false;
+        if ($validator->passes()) {
+            return false;
+        }
 
         $this->errors = $validator->messages();
 
         return true;
     }
 
-    protected function registerCustomValidators(){
+    protected function registerCustomValidators()
+    {
 
     }
 
@@ -48,6 +57,15 @@ abstract class IValidator {
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    public function setAttributes(array $attributes)
+    {
+        $this->attributes($attributes);
+    }
+
+    public function setRule(array $rule){
+        $this->rule = $rule;
     }
 
 }
