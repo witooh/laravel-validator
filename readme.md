@@ -1,6 +1,26 @@
-<h1>Validator Interface</h1>
+#Validator Interface#
 
-<h2>Usage</h2>
+##Install##
+
+add in app.config
+
+```php
+return array(
+    'providers'=>array(
+        ...
+        ...
+        'Witooh\Validators\ValidatorsServiceProvider',
+    ),
+
+    'alias'=>array(
+        '''
+        ...
+        'Validators' => 'Witooh\Validators\Facades\Validators'
+    ),
+);
+```
+
+##Usage##
 ```php
 namespace Domains\Validators;
 
