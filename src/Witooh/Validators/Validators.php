@@ -17,10 +17,10 @@ class Validators implements IValidatorContainer {
 
     /**
      * @param string $key
-     * @param IValidator $validaotr
+     * @param string $validator
      */
-    public function add($key, IValidator $validaotr){
-        $this->validators->put($key, $validaotr);
+    public function add($key, $validator){
+        $this->validators->put($key, $validator);
     }
 
     /**
@@ -28,7 +28,14 @@ class Validators implements IValidatorContainer {
      * @return IValidator | null;
      */
     public function get($key){
-        return $this->validators->get($key);
+        $validator = $this->validators->get($key);
+        if($validator instanceof IValidator){
+            return $validator;
+        }else{
+            $validator = new $validator();
+            $this->validators->put($key, $validator);
+            return $validator;
+        }
     }
 
     /**

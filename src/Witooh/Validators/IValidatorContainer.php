@@ -6,9 +6,9 @@ interface IValidatorContainer {
 
     /**
      * @param string $key
-     * @param IValidator $validaotr
+     * @param string $validator
      */
-    public function add($key, IValidator $validaotr);
+    public function add($key, $validator);
 
     /**
      * @param string $key
