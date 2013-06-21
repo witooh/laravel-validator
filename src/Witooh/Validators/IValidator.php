@@ -49,9 +49,13 @@ abstract class IValidator
 
     }
 
-    public function getRule()
+    public function getRule($field = null)
     {
-        return $this->rule;
+        if($field == null){
+            return $this->rule;
+        }else{
+            return $this->rule[$field] ?: null;
+        }
     }
 
     public function getErrors()
@@ -66,6 +70,26 @@ abstract class IValidator
 
     public function setRule(array $rule){
         $this->rule = $rule;
+    }
+
+    public function inlineValidate($field){
+
+        $value = \Input::get($field);
+
+        if(isset($value)){
+
+            $validator = Validator::make(\Input::all(), array($field=>$this->getRule($field)));
+
+            if ($validator->passes()) {
+                return true;
+            }
+
+            $this->errors = $validator->messages();
+
+            return $this->errors->getMessages()[$field][0];
+        }
+
+        throw new \UnexpectedValueException();
     }
 
 }

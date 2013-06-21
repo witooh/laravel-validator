@@ -1,6 +1,10 @@
 <?php
 namespace Witooh\Validators;
 
+use Illuminate\Support\Facades\Validator;
+use Input;
+use App;
+
 class InlineAjaxValidator {
 
     protected $validatorClassName;
@@ -12,14 +16,17 @@ class InlineAjaxValidator {
     /**
      * @param string $validatorClassName
      * @param string $field
-     * @param mixed $value
      */
-    function __construct($validatorClassName, $field, $value){
-        $this->validator = new $validatorClassName(array(
-            $field=>$value
+    function __construct($validatorClassName, $field){
+        $this->value = Input::get($field);
+
+        $this->validator = App::make('validators')->get($validatorClassName);
+
+        $this->validator->setAttributes(array(
+                $field=>$this->value
         ));
+
         $this->validatorClassName = $validatorClassName;
-        $this->value = $value;
         $this->field = $field;
     }
 
@@ -28,6 +35,9 @@ class InlineAjaxValidator {
         return $this->field;
     }
 
+    /**
+     * @return IValidator
+     */
     public function getValidator()
     {
         return $this->validator;
