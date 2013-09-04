@@ -1,8 +1,8 @@
-<?php namespace Witooh\Validators;
+<?php namespace Witooh\Validator;
 
 use Illuminate\Support\ServiceProvider;
 
-class ValidatorsServiceProvider extends ServiceProvider {
+class ValidatorServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -12,26 +12,14 @@ class ValidatorsServiceProvider extends ServiceProvider {
 	protected $defer = false;
 
 	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		$this->package('witooh/validators');
-
-	}
-
-	/**
 	 * Register the service provider.
 	 *
 	 * @return void
 	 */
 	public function register()
 	{
-        $this->app['validators'] = $this->app->share(function($app){
-            return new Validators();
-        });
+		$this->app->singleton('\Witooh\Validator\IResolverContainer', '\Witooh\Validator\ResolverContainer');
+		$this->app->singleton('\Witooh\Validator\IValidator', '\Witooh\Validator\Validator');
 	}
 
 	/**
