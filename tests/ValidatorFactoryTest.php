@@ -8,7 +8,7 @@ use Witooh\Validator\ResolverContainer;
 use Way\Tests\Assert;
 use Witooh\Validator\ValidatorFactory;
 
-class ValidatorFactoryTest extends \PHPUnit_Framework_TestCase
+class ValidatorFactoryTest extends \TestCase
 {
     /**
      * @var \Witooh\Validator\IResolverContainer
@@ -20,11 +20,6 @@ class ValidatorFactoryTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
         $this->resolverContainer = m::mock('Witooh\Validator\IResolverContainer');
         $this->resolverContainer->shouldReceive('resolve')->andReturnNull();
-    }
-
-    public function tearDown()
-    {
-        m::close();
     }
 
     public function testNew(){

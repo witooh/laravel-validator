@@ -1,7 +1,7 @@
 <?php
-namespace Witooh\Validator;
+namespace Witooh\Validators;
 
-interface IValidator {
+interface IValidatorFactory {
     /**
      * @param IResolverContainer $resolverContainer
      */
@@ -10,7 +10,7 @@ interface IValidator {
     /**
      * @param string $validatorName
      * @param array $data
-     * @return mixed
+     * @return IBaseValidator
      */
     public function make($validatorName, array $data);
 

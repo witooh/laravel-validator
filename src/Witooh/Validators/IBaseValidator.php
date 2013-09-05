@@ -1,5 +1,5 @@
 <?php
-namespace Witooh\Validator;
+namespace Witooh\Validators;
 
 interface IBaseValidator {
 

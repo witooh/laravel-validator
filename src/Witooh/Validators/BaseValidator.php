@@ -1,5 +1,5 @@
 <?php
-namespace Witooh\Validator;
+namespace Witooh\Validators;
 
 use Illuminate\Support\Facades\Validator as LaravelValidator;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Witooh\Validator;
+namespace Witooh\Validators;
 
 interface IResolverContainer
 {
@@ -20,4 +20,9 @@ interface IResolverContainer
      * @param array $resolvers
      */
     public function resolve(array $resolvers);
+
+    /**
+     * @return array
+     */
+    public function getResolvers();
 }

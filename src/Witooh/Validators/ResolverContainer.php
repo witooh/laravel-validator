@@ -1,5 +1,5 @@
 <?php
-namespace Witooh\Validator;
+namespace Witooh\Validators;
 
 use Illuminate\Support\Facades\Validator;
 
@@ -33,6 +33,14 @@ class ResolverContainer implements IResolverContainer
     }
 
     /**
+     * @return array
+     */
+    public function getResolvers()
+    {
+        return $this->resolvers;
+    }
+
+    /**
      * @param array $resolvers
      * @throws \Exception
      */
@@ -48,13 +56,13 @@ class ResolverContainer implements IResolverContainer
 
                 if (!$this->has($resolver)) {
 
-//                    $resolverClass = new \ReflectionClass($resolver);
+                    $resolverClass = new \ReflectionClass($resolver);
 
-//                    $this->add($resolver);
+                    $this->add($resolver);
 
-                    Validator::resolver(function ($translator, $data, $rules, $messages) use (&$resolver)
+                    Validator::resolver(function ($translator, $data, $rules, $messages) use (&$resolverClass)
                     {
-                        return new $resolver(array($translator, $data, $rules, $messages));
+                        return $resolverClass->newInstanceArgs(array($translator, $data, $rules, $messages));
                     });       }
             } catch (Exception $e) {
                 throw new \Exception($e->getMessage());

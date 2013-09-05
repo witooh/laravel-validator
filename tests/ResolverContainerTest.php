@@ -13,14 +13,8 @@ use Mockery as m;
 use Way\Tests\Assert;
 use Witooh\Validator\ResolverContainer;
 
-class ResolverContainerTest extends \PHPUnit_Framework_TestCase
+class ResolverContainerTest extends \TestCase
 {
-
-    public function tearDown()
-    {
-        m::close();
-    }
-
     public function testNew()
     {
         $resolverContainer = new ResolverContainer();
@@ -41,17 +35,45 @@ class ResolverContainerTest extends \PHPUnit_Framework_TestCase
         Assert::assertFalse($resolverContainer->has('c'));
     }
 
-    public function testResolve()
+    public function testResolveAndHas()
     {
         //Arrange
-        $a = m::mock('Illuminate\Validation\Validator');
-        $b = m::mock('Illuminate\Validation\Validator');
+        $this->createApplication();
+        $a         = m::mock('Illuminate\Validation\Validator');
+        $b         = m::mock('Illuminate\Validation\Validator');
         $resolvers = array(get_class($a), get_class($b));
 
         //Act
         $resolverContainer = new ResolverContainer();
-//        $resolverContainer->resolve($resolvers);
+        $resolverContainer->resolve($resolvers);
 
-
+        //Assert
+        Assert::assertTrue($resolverContainer->has(get_class($a)));
+        Assert::assertTrue($resolverContainer->has(get_class($b)));
+        Assert::assertFalse($resolverContainer->has('noClass'));
     }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testResolveClassNotExistException()
+    {
+        //Arrange
+        $resolvers = array('x', 'y', 'z');
+
+        //Act
+        $resolverContainer = new ResolverContainer();
+        $resolverContainer->resolve($resolvers);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testResolveInvalidaArgumentException()
+    {
+        //Act
+        $resolverContainer = new ResolverContainer();
+        $resolverContainer->resolve('123');
+    }
+
 }

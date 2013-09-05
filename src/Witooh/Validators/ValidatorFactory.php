@@ -1,7 +1,7 @@
 <?php
-namespace Witooh\Validator;
+namespace Witooh\Validators;
 
-class ValidatorFactory
+class ValidatorFactory implements IValidatorFactory
 {
 
     /**
@@ -20,7 +20,7 @@ class ValidatorFactory
     /**
      * @param string $validatorName
      * @param array $data
-     * @return object
+     * @return IBaseValidator
      * @throws \ReflectionException
      */
     public function make($validatorName, array $data)
@@ -30,7 +30,7 @@ class ValidatorFactory
 
             return $validatorNameClass->newInstanceArgs(array($data, $this->resolverContainer));
         } catch (\Exception $e) {
-            throw new \ReflectionException;
+            throw new \ReflectionException($e->getMessage());
         }
     }
 

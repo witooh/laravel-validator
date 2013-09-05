@@ -1,4 +1,4 @@
-<?php namespace Witooh\Validator;
+<?php namespace Witooh\Validators;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -18,8 +18,8 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->singleton('\Witooh\Validator\IResolverContainer', '\Witooh\Validator\ResolverContainer');
-		$this->app->singleton('\Witooh\Validator\IValidator', '\Witooh\Validator\Validator');
+		$this->app->singleton('Witooh\Validators\IResolverContainer', 'Witooh\Validators\ResolverContainer');
+		$this->app->singleton('Witooh\Validators\IValidatorFactory', 'Witooh\Validators\ValidatorFactory');
 	}
 
 	/**
