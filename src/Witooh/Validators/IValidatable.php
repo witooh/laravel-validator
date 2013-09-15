@@ -1,13 +1,18 @@
 <?php
 namespace Witooh\Validators;
 
-interface IBaseValidator {
 
+interface IValidatable {
     /**
      * @param array $data
-     * @param IResolverContainer $resolveContainer
      */
-    public function __construct(array $data, IResolverContainer $resolveContainer);
+    public function __construct(array $data);
+
+    /**
+     * @param string $className
+     * @return string
+     */
+    public function getRuleName($className);
 
     /**
      * @return bool

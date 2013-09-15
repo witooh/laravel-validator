@@ -18,8 +18,7 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->singleton('Witooh\Validators\IResolverContainer', 'Witooh\Validators\ResolverContainer');
-		$this->app->singleton('Witooh\Validators\IValidatorFactory', 'Witooh\Validators\ValidatorFactory');
+
 	}
 
 	/**
