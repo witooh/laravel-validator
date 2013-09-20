@@ -1,6 +1,8 @@
 <?php namespace Witooh\Validators;
 
 use Illuminate\Support\ServiceProvider;
+use Witooh\Authenticate\Services\Authenticate;
+use Witooh\Authenticate\Strategies\BasicHttpStrategy;
 
 class ValidatorServiceProvider extends ServiceProvider {
 
@@ -18,7 +20,13 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
+        $this->app->singleton('Balista\Authenticate\Service\IAuthenticate', function ($app) {
+            return new Authenticate();
+        });
 
+        $this->app->singleton('Balista\Authenticate\Strategies\BasicHttpStrategy', function ($app) {
+            return new BasicHttpStrategy($this->app['auth']);
+        });
 	}
 
 	/**

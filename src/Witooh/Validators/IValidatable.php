@@ -4,25 +4,15 @@ namespace Witooh\Validators;
 
 interface IValidatable {
     /**
-     * @param array $data
+     * @param $data
+     * @return void
      */
-    public function __construct(array $data);
-
-    /**
-     * @param string $className
-     * @return string
-     */
-    public function getRuleName($className);
+    public function with($data);
 
     /**
      * @return bool
      */
     public function passes();
-
-    /**
-     * @return bool
-     */
-    public function failes();
 
     /**
      * @return \Illuminate\Support\MessageBag
