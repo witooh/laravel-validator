@@ -28,7 +28,7 @@ class AbstractLaravelValidator implements IValidatable
     /**
      * @var array
      */
-    protected $customValidations = array();
+    protected $customValidators = array();
     /**
      * @var \Illuminate\Support\MessageBag
      */
@@ -40,27 +40,32 @@ class AbstractLaravelValidator implements IValidatable
      */
     public function __construct(Validator $laravelValidatorFactory, App $app)
     {
-        $this->app = $app;
+        $this->app                     = $app;
         $this->laravelValidatorFactory = $laravelValidatorFactory;
-        $this->data = null;
-        $this->errors = null;
+        $this->data                    = null;
+        $this->errors                  = null;
     }
 
     /**
      * @param array $data
-     * @return void
+     * @return $this
      */
     public function with($data)
     {
         $this->data = $data;
+
+        return $this;
     }
 
     /**
      * @param string $className
      * @return string
      */
-    protected function getRuleName($className){
-        return Str::snake(str_replace("CustomValidator", "", array_pop(explode('\\', $className))));
+    protected function getRuleName($className)
+    {
+        $explodeClass = explode('\\', $className);
+
+        return Str::snake(str_replace("CustomValidator", "", array_pop($explodeClass)));
     }
 
     /**
@@ -68,27 +73,38 @@ class AbstractLaravelValidator implements IValidatable
      */
     public function passes()
     {
-        foreach ($this->customValidations as $extend) {
-
-            $ruleName = $this->getRuleName($extend);
-
-            if(!$this->app->offsetExists($extend)){
-                $this->app->singleton($extend, $extend);
-            }
-            $this->laravelValidatorFactory->extend($ruleName, function($attribute, $value, $parameters) use(&$extend,&$this){
-                return $this->app->make($extend)->validate($attribute, $value, $this->data, $parameters);
-            });
-        }
-
+        $this->resolveCustomValidator();
         $validator = $this->laravelValidatorFactory->make($this->data, $this->rule, $this->messages);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             $this->errors = $validator->errors();
+
             return false;
         }
 
         return true;
+    }
+
+    protected function resolveCustomValidator()
+    {
+        foreach ($this->customValidators as $extend) {
+
+            $ruleName = $this->getRuleName($extend);
+
+            if (!$this->app->offsetExists($extend)) {
+                $this->app->singleton($extend, $extend);
+            }
+
+            $data   = $this->data;
+            $extend = $this->app->make($extend);
+
+            $this->laravelValidatorFactory->extend($ruleName, function ($attribute, $value, $parameters) use (
+                &$extend,
+                &$data
+            ) {
+                return $extend->validate($attribute, $value, $data, $parameters);
+            });
+        }
     }
 
     /**

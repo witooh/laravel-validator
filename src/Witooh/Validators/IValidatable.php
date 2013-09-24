@@ -5,7 +5,7 @@ namespace Witooh\Validators;
 interface IValidatable {
     /**
      * @param $data
-     * @return void
+     * @return $this
      */
     public function with($data);
 

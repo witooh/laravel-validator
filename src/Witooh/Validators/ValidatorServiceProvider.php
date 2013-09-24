@@ -11,7 +11,7 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
 	/**
 	 * Register the service provider.
@@ -20,13 +20,7 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        $this->app->singleton('Balista\Authenticate\Service\IAuthenticate', function ($app) {
-            return new Authenticate();
-        });
 
-        $this->app->singleton('Balista\Authenticate\Strategies\BasicHttpStrategy', function ($app) {
-            return new BasicHttpStrategy($this->app['auth']);
-        });
 	}
 
 	/**
