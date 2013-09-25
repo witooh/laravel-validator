@@ -11,7 +11,7 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = true;
+	protected $defer = false;
 
 	/**
 	 * Register the service provider.
@@ -20,7 +20,9 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-
+        $this->app->singleton('Witooh\Validators\IValidatorFactory', function($app){
+            return new ValidatorFactory("", $app);
+        });
 	}
 
 	/**
