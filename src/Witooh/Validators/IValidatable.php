@@ -3,16 +3,13 @@ namespace Witooh\Validators;
 
 
 interface IValidatable {
-    /**
-     * @param $data
-     * @return $this
-     */
-    public function with($data);
 
     /**
+     * @param array $input
+     * @param string|null $scenario
      * @return bool
      */
-    public function passes();
+    public function validate($input, $scenario=null);
 
     /**
      * @return \Illuminate\Support\MessageBag
@@ -20,7 +17,8 @@ interface IValidatable {
     public function getErrors();
 
     /**
+     * @param string $scenario
      * @return array
      */
-    public function getRule();
+    public function getRule($scenario);
 }

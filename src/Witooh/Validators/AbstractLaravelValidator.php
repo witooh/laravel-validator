@@ -20,7 +20,7 @@ class AbstractLaravelValidator implements IValidatable
     /**
      * @var array
      */
-    protected $rule;
+    protected $rule = array();
     /**
      * @var array
      */
@@ -34,6 +34,8 @@ class AbstractLaravelValidator implements IValidatable
      */
     protected $errors;
 
+    protected $scenarios = array();
+
     /**
      * @param Validator $laravelValidatorFactory
      * @param App $app
@@ -45,6 +47,30 @@ class AbstractLaravelValidator implements IValidatable
         $this->data                    = null;
         $this->errors                  = null;
     }
+
+    /**
+     * @param array $input
+     * @param string|null $scenario
+     * @return bool
+     */
+    public function validate($input, $scenario = null)
+    {
+        $rule = $this->getRule($scenario);
+
+        if (!empty($rule)) {
+            $this->resolveCustomValidator();
+            $validator = $this->laravelValidatorFactory->make($input, $rule, $this->messages);
+
+            if ($validator->fails()) {
+                $this->errors = $validator->errors();
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     /**
      * @param array $data
@@ -69,17 +95,22 @@ class AbstractLaravelValidator implements IValidatable
     }
 
     /**
+     * @param string|null $scenario
      * @return bool
      */
-    public function passes()
+    public function passes($scenario=null)
     {
-        $this->resolveCustomValidator();
-        $validator = $this->laravelValidatorFactory->make($this->data, $this->rule, $this->messages);
+        $rule = $this->getRule($scenario);
 
-        if ($validator->fails()) {
-            $this->errors = $validator->errors();
+        if (!empty($rule)) {
+            $this->resolveCustomValidator();
+            $validator = $this->laravelValidatorFactory->make($this->data, $rule, $this->messages);
 
-            return false;
+            if ($validator->fails()) {
+                $this->errors = $validator->errors();
+
+                return false;
+            }
         }
 
         return true;
@@ -116,10 +147,32 @@ class AbstractLaravelValidator implements IValidatable
     }
 
     /**
+     * @param string $scenario
      * @return array
      */
-    public function getRule()
+    public function getRule($scenario)
     {
-        return $this->rule;
+        if ($scenario != null && isset($this->scenarios[$scenario])) {
+            return $this->concatRule($scenario);
+        } else {
+            return $this->rule;
+        }
+    }
+
+    protected function concatRule($scenario)
+    {
+        $rules = array();
+        $merge = array_merge_recursive($this->rule, $this->scenarios[$scenario]);
+        foreach($merge as $name=>$rule)
+        {
+            if(is_array($rule))
+            {
+                $rules[$name] = implode('|', $rule);
+            }else{
+                $rules[$name] = $rule;
+            }
+        }
+
+        return $rules;
     }
 }
