@@ -21,4 +21,12 @@ interface IValidatable {
      * @return array
      */
     public function getRule($scenario);
+
+    /**
+     * @param string $value
+     * @param mixed $field
+     * @param string|null $scenario
+     * @return bool
+     */
+    public function validateField($value, $field, $scenario = null);
 }

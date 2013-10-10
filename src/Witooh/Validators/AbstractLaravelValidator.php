@@ -10,10 +10,6 @@ class AbstractLaravelValidator implements IValidatable
 {
     protected $app;
     /**
-     * @var array
-     */
-    protected $data;
-    /**
      * @var \Illuminate\Validation\Factory
      */
     protected $laravelValidatorFactory;
@@ -44,8 +40,33 @@ class AbstractLaravelValidator implements IValidatable
     {
         $this->app                     = $app;
         $this->laravelValidatorFactory = $laravelValidatorFactory;
-        $this->data                    = null;
         $this->errors                  = null;
+    }
+
+    /**
+     * @param string $value
+     * @param mixed $field
+     * @param string|null $scenario
+     * @return bool
+     */
+    public function validateField($value, $field, $scenario = null)
+    {
+        $rule = $this->getRule($scenario);
+
+        if (isset($rule[$field])) {
+            $fieldRule  = array($field => $rule[$field]);
+            $fieldValue = array($field => $value);
+            $this->resolveCustomValidator($fieldValue);
+            $validator = $this->laravelValidatorFactory->make($fieldValue, $fieldRule, $this->messages);
+
+            if ($validator->fails()) {
+                $this->errors = $validator->errors();
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -58,7 +79,7 @@ class AbstractLaravelValidator implements IValidatable
         $rule = $this->getRule($scenario);
 
         if (!empty($rule)) {
-            $this->resolveCustomValidator();
+            $this->resolveCustomValidator($input);
             $validator = $this->laravelValidatorFactory->make($input, $rule, $this->messages);
 
             if ($validator->fails()) {
@@ -69,18 +90,6 @@ class AbstractLaravelValidator implements IValidatable
         }
 
         return true;
-    }
-
-
-    /**
-     * @param array $data
-     * @return $this
-     */
-    public function with($data)
-    {
-        $this->data = $data;
-
-        return $this;
     }
 
     /**
@@ -95,28 +104,9 @@ class AbstractLaravelValidator implements IValidatable
     }
 
     /**
-     * @param string|null $scenario
-     * @return bool
+     * @param array $data
      */
-    public function passes($scenario=null)
-    {
-        $rule = $this->getRule($scenario);
-
-        if (!empty($rule)) {
-            $this->resolveCustomValidator();
-            $validator = $this->laravelValidatorFactory->make($this->data, $rule, $this->messages);
-
-            if ($validator->fails()) {
-                $this->errors = $validator->errors();
-
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected function resolveCustomValidator()
+    protected function resolveCustomValidator($data)
     {
         foreach ($this->customValidators as $extend) {
 
@@ -126,7 +116,6 @@ class AbstractLaravelValidator implements IValidatable
                 $this->app->singleton($extend, $extend);
             }
 
-            $data   = $this->data;
             $extend = $this->app->make($extend);
 
             $this->laravelValidatorFactory->extend($ruleName, function ($attribute, $value, $parameters) use (
@@ -163,12 +152,10 @@ class AbstractLaravelValidator implements IValidatable
     {
         $rules = array();
         $merge = array_merge_recursive($this->rule, $this->scenarios[$scenario]);
-        foreach($merge as $name=>$rule)
-        {
-            if(is_array($rule))
-            {
+        foreach ($merge as $name => $rule) {
+            if (is_array($rule)) {
                 $rules[$name] = implode('|', $rule);
-            }else{
+            } else {
                 $rules[$name] = $rule;
             }
         }
