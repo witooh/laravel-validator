@@ -11,7 +11,7 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
 	/**
 	 * Register the service provider.
@@ -32,7 +32,9 @@ class ValidatorServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array();
+		return array(
+            'Witooh\Validators\IValidatorFactory'
+        );
 	}
 
 }
