@@ -1,14 +1,11 @@
 <?php
 namespace Witooh\Validators;
 
-use Illuminate\Support\MessageBag;
+use App;
 use Illuminate\Support\Str;
-use \Illuminate\Validation\Factory as Validator;
-use Illuminate\Foundation\Application as App;
 
 class AbstractLaravelValidator implements IValidatable
 {
-    protected $app;
     /**
      * @var \Illuminate\Validation\Factory
      */
@@ -32,14 +29,10 @@ class AbstractLaravelValidator implements IValidatable
 
     protected $scenarios = array();
 
-    /**
-     * @param Validator $laravelValidatorFactory
-     * @param App $app
-     */
-    public function __construct(Validator $laravelValidatorFactory, App $app)
+
+    public function __construct()
     {
-        $this->app                     = $app;
-        $this->laravelValidatorFactory = $laravelValidatorFactory;
+        $this->laravelValidatorFactory = App::make('validator');
         $this->errors                  = null;
     }
 
@@ -112,11 +105,11 @@ class AbstractLaravelValidator implements IValidatable
 
             $ruleName = $this->getRuleName($extend);
 
-            if (!$this->app->offsetExists($extend)) {
-                $this->app->singleton($extend, $extend);
+            if (!App::offsetExists($extend)) {
+                App::singleton($extend, $extend);
             }
 
-            $extend = $this->app->make($extend);
+            $extend = App::make($extend);
 
             $this->laravelValidatorFactory->extend($ruleName, function ($attribute, $value, $parameters) use (
                 &$extend,
